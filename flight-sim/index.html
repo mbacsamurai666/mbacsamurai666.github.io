@@ -52,14 +52,25 @@ canvas{display:block}
 .a-pm4{background:linear-gradient(135deg,#0f141b,#2b3544);gap:10px}.a-pm4 kbd{font-size:20px;padding:8px 14px}
 kbd{background:#fff2;border-radius:4px;padding:1px 6px;font-family:ui-monospace,monospace}
 .tip{opacity:.75;line-height:1.55;margin:4px 0 14px}
-#tc{position:fixed;inset:0;pointer-events:none;z-index:5}#tc *{pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none}
-#thr{position:absolute;left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));width:54px;height:42vh;max-height:260px;background:rgba(10,20,30,.45);border:2px solid #fff6;border-radius:14px;overflow:hidden}
+#tc{position:fixed;inset:0;pointer-events:none;z-index:5}#tc *{pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+html,body{overscroll-behavior:none;touch-action:none;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+#ov,#pm{touch-action:pan-y}
+#thr{position:absolute;left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));width:68px;height:min(52vh,300px);background:rgba(10,20,30,.45);border:2px solid #fff6;border-radius:18px;overflow:hidden}
 #thrf{position:absolute;bottom:0;left:0;right:0;height:0;background:rgba(74,222,128,.6);pointer-events:none}#thr span{position:absolute;top:6px;width:100%;text-align:center;font:700 11px system-ui;pointer-events:none}
-#stick{position:absolute;right:calc(24px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));width:150px;height:150px;border-radius:50%;background:rgba(10,20,30,.4);border:2px solid #fff6}
-#knob{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(255,255,255,.55);pointer-events:none}
-.tb{position:absolute;min-width:58px;height:42px;line-height:42px;padding:0 6px;text-align:center;background:rgba(10,20,30,.5);border:2px solid #fff6;border-radius:12px;font:700 12px system-ui;color:#fff;box-sizing:border-box}.tb:active{background:rgba(255,255,255,.4)}.tb.on{background:rgba(74,222,128,.5)}
-#tb-l,#tb-r{bottom:calc(24px + env(safe-area-inset-bottom,0px))}#tb-l{left:calc(50% - 70px)}#tb-r{left:calc(50% + 8px)}
-#tbar{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:calc(10px + env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;max-width:204px}#tbar .tb{position:static}
+#thr i{position:absolute;left:0;right:0;height:2px;background:#fff8;pointer-events:none}
+#stick{position:absolute;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));width:clamp(140px,48vh,210px);height:clamp(140px,48vh,210px);border-radius:50%;background:rgba(10,20,30,.4);border:2px solid #fff6}
+#stick:before{content:"";position:absolute;left:50%;top:8%;bottom:8%;width:1px;background:#fff3;pointer-events:none}#stick:after{content:"";position:absolute;top:50%;left:8%;right:8%;height:1px;background:#fff3;pointer-events:none}
+#knob{position:absolute;left:50%;top:50%;width:42%;height:42%;margin:-21% 0 0 -21%;border-radius:50%;background:rgba(255,255,255,.6);pointer-events:none}
+.tb{position:absolute;min-width:58px;height:44px;line-height:44px;padding:0 8px;text-align:center;background:rgba(10,20,30,.5);border:2px solid #fff6;border-radius:12px;font:700 12px system-ui;color:#fff;box-sizing:border-box}.tb:active{background:rgba(255,255,255,.4)}.tb.on{background:rgba(74,222,128,.5)}
+#tb-l,#tb-r{bottom:calc(20px + env(safe-area-inset-bottom,0px));min-width:78px;height:54px;line-height:54px;font-size:14px}#tb-l{left:calc(50% - 86px)}#tb-r{left:calc(50% + 8px)}
+#tbar{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));right:calc(10px + env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;max-width:250px}#tbar .tb{position:static}
+#tmore{display:none;flex-wrap:wrap;justify-content:flex-end;gap:6px;width:100%}#tmore.open{display:flex}
+.tb.big{border-radius:50%;width:clamp(74px,22vh,96px);height:clamp(74px,22vh,96px);line-height:clamp(74px,22vh,96px);font-size:15px;min-width:0;padding:0;background:rgba(220,60,40,.5);border-color:#fffa}
+#tb-fi{right:calc(clamp(140px,48vh,210px) + 40px + env(safe-area-inset-right,0px));bottom:calc(26px + env(safe-area-inset-bottom,0px))}
+#tb-ms{right:calc(clamp(140px,48vh,210px) + 40px + env(safe-area-inset-right,0px));bottom:calc(clamp(74px,22vh,96px) + 38px + env(safe-area-inset-bottom,0px));background:rgba(240,150,30,.5)}
+#tb-fr{right:calc(clamp(140px,48vh,210px) + 54px + clamp(74px,22vh,96px) + env(safe-area-inset-right,0px));bottom:calc(30px + env(safe-area-inset-bottom,0px));background:rgba(60,140,240,.5);width:clamp(60px,18vh,78px);height:clamp(60px,18vh,78px);line-height:clamp(60px,18vh,78px);font-size:12px}
+#rot{position:fixed;inset:0;z-index:30;background:rgba(6,12,22,.94);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;font:600 20px/1.5 system-ui;padding:24px}#rot b{font-size:56px;display:block;animation:rt 2s ease-in-out infinite}@keyframes rt{0%,100%{transform:rotate(0)}50%{transform:rotate(-90deg)}}#rot button{margin-top:18px;font:700 16px system-ui;padding:12px 24px;border:0;border-radius:12px;background:#4ade80;color:#06210f}
+@media(max-height:520px){.tile{min-height:132px}.tile .art{min-height:70px}.cap b{font-size:13px}.cap small{font-size:11px;line-height:1.35}}
 #rst{position:absolute;left:50%;top:40%;transform:translateX(-50%);display:none;font:700 18px system-ui;padding:14px 28px;border:0;border-radius:12px;background:#4ade80;color:#06210f}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><symbol id="pl" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></symbol></svg>
@@ -132,12 +143,15 @@ kbd{background:#fff2;border-radius:4px;padding:1px 6px;font-family:ui-monospace,
 <footer class="foot"><span><kbd>Esc</kbd>BACK / RESUME</span><span><kbd>M</kbd>MUTE</span></footer>
 </div>
 <div id="tc" style="display:none">
-<div id="thr"><div id="thrf"></div><span>THR</span></div>
+<div id="thr"><div id="thrf"></div><span>THR</span><i style="top:0"></i></div>
 <div id="stick"><div id="knob"></div></div>
 <div class="tb" id="tb-l">◀ RUD</div><div class="tb" id="tb-r">RUD ▶</div>
-<div id="tbar"><div class="tb" id="tb-fl">FLAPS</div><div class="tb" id="tb-gr">GEAR</div><div class="tb" id="tb-br">BRAKE</div><div class="tb" id="tb-lt">LIGHT</div><div class="tb" id="tb-fi" style="display:none">FIRE</div><div class="tb" id="tb-ms" style="display:none">MSL</div><div class="tb" id="tb-fr" style="display:none">FLARE</div><div class="tb" id="tb-at">A/THR</div><div class="tb" id="tb-sm">SMOKE</div><div class="tb" id="tb-ch" style="display:none">💬</div><div class="tb" id="tb-cm">CAM</div><div class="tb" id="tb-ps">❚❚</div></div>
+<div class="tb big" id="tb-fi" style="display:none">FIRE</div><div class="tb big" id="tb-ms" style="display:none">MSL</div><div class="tb big" id="tb-fr" style="display:none">FLARE</div>
+<div id="tbar"><div class="tb" id="tb-fl">FLAPS</div><div class="tb" id="tb-gr">GEAR</div><div class="tb" id="tb-br">BRAKE</div><div class="tb" id="tb-at">A/THR</div><div class="tb" id="tb-cm">CAM</div><div class="tb" id="tb-ps">❚❚</div><div class="tb" id="tb-fs">⛶</div><div class="tb" id="tb-mo">⋯</div>
+<div id="tmore"><div class="tb" id="tb-tl">TILT</div><div class="tb" id="tb-rc" style="display:none">RECENTER</div><div class="tb" id="tb-lt">LIGHT</div><div class="tb" id="tb-sm">SMOKE</div><div class="tb" id="tb-ch" style="display:none">💬</div></div></div>
 <button id="rst">Restart</button>
 </div>
+<div id="rot"><b>📱</b>Rotate your phone to landscape<br><small style="opacity:.7;font-weight:500">The game is played sideways</small><button id="rot-fs">Fullscreen</button></div>
 <script>/* three.js r128 (MIT License) — embedded so the game works offline */
 /**
  * @license
@@ -166,7 +180,7 @@ const clamp=(v,a,b)=>v<a?a:v>b?b:v,ss=k=>{k=clamp(k,0,1);return k*k*(3-2*k)},rnd
 function ld(k){try{return JSON.parse(localStorage.getItem(k))||{}}catch(e){return {}}}
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 const isMob=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-const SET=Object.assign({snd:true,tod:0,cam:0,gfx:isMob?0:1,wind:0,hud:0,bot:0,ctl:0},ld('fs-set'));
+const SET=Object.assign({tilt:0,snd:true,tod:0,cam:0,gfx:isMob?0:1,wind:0,hud:0,bot:0,ctl:0},ld('fs-set'));
 const saveSet=()=>sv('fs-set',SET);
 const DNAMES=['Easy','Normal','Hard'];
 // compass heading of a horizontal direction (x,z): +z = north, -x = east
@@ -514,7 +528,7 @@ function setupApproach(){const r=RW[0],L=r.sz,dist=P.appDist,gam=3*D2R,v=P.appr,
  const CD=P.cd0+.04+P.gcd+P.k*CLr*CLr+1.5*Math.sin(al)**2;thr=clamp((qd*P.S*CD-P.m*9.81*Math.sin(gam))/(P.T*Math.max(.15,1-v/P.vt)),.05,1);eng=thr;air=true;grounded=false;lastGnd=false;if(SET.ctl==0){atOn=true;atSpd=v}}
 
 // ================= input =================
-const K={},TC={pi:0,ro:0,ya:0},GP={pi:0,ro:0,ya:0,th:0,brk:false,fire:false,prev:[]};
+const K={},TC={pi:0,ro:0,ya:0},TT={pi:0,ro:0},GP={pi:0,ro:0,ya:0,th:0,brk:false,fire:false,prev:[]};
 function cycleFlaps(){flap=(flap+1)%3;click();if(started)toast('Flaps '+['UP','1','FULL'][flap],1)}
 function toggleGear(){if(!P.retract){toast('Fixed landing gear',1.2);return}if(grounded&&gear){toast('Gear locked on the ground',1.2);return}gear=!gear;gearSnd();toast('Gear '+(gear?'DOWN':'UP'),1)}
 function toggleAT(){if(grounded){toast('Auto-throttle works in the air',1.4);return}atOn=!atOn;if(atOn)atSpd=Math.max(ias,P.st*1.12);click();toast('Auto-throttle '+(atOn?'ON · '+Math.round(atSpd*3.6)+' km/h (R/F change speed)':'OFF · manual throttle'),2)}
@@ -577,7 +591,7 @@ function showTab(n){['welcome','profile','options','controls','online'].forEach(
 function refresh(){[0,1,2,3,4].forEach(i=>{$('c'+i).classList.toggle('sel',P===TYPES[i]);$('c'+i).querySelector('.badge').style.display=P===TYPES[i]?'':'none'});$('loc').textContent=STARTS[startIdx];$('ac-name').textContent=P.name;$('best').textContent=stats.best?stats.best+'/100':'—';$('rbest').textContent=stats.race?fmtR(stats.race):'—';$('dfk').textContent=stats.kills;$('spk').textContent=stats.mach?'Mach '+stats.mach.toFixed(2):'—';$('dfl').textContent=DNAMES[SET.bot];
  const r=hasFlight&&!crashed;$('resbar').style.display=r?'':'none';$('resk').style.display=r?'':'none'}
 function pick(n){setType(n);mode='free';reset();hasFlight=false;refresh()}
-function startFlight(fresh,md){if(md=='speed'&&P.key!=4)setType(4);initAudio();if(AC&&AC.state=='suspended')AC.resume();if(fresh){if(md)mode=md;reset();stats.flights++;saveStats();if(mode=='challenge')toast('<b>LANDING CHALLENGE</b>Runway 36R ahead. Follow the glide-path diamonds, cut power over the threshold and flare gently.',6);if(SET.ctl==0&&mode=='free')toast('<b>EASY CONTROLS</b>Hold <kbd>R</kbd> for throttle — the plane lifts off by itself. <kbd>W</kbd><kbd>S</kbd> / arrows pitch, <kbd>A</kbd><kbd>D</kbd> roll. Let go and it levels out.',7);if(mode=='speed')toast('<b>SPEED RECORD</b>Full throttle <kbd>R</kbd>, tap <kbd>S</kbd> to climb to 25–35 km where the air is thin — how fast can you go? Aim for Mach 6!',7);if(mode=='dogfight')toast('<b>DOGFIGHT</b>Chase and shoot! <kbd>V</kbd> guns · <kbd>N</kbd> homing missile (aim to lock) · <kbd>K</kbd> flares · Bots: '+DNAMES[SET.bot]+' (change in Options)',6);if(mode=='race')toast('<b>RING RACE</b>Fly through the glowing gold ring. Follow the yellow arrow! Press T for colour smoke.',5)}
+function startFlight(fresh,md){if(isTouch){tryFS();setTimeout(tiltCal,400)}if(md=='speed'&&P.key!=4)setType(4);initAudio();if(AC&&AC.state=='suspended')AC.resume();if(fresh){if(md)mode=md;reset();stats.flights++;saveStats();if(mode=='challenge')toast('<b>LANDING CHALLENGE</b>Runway 36R ahead. Follow the glide-path diamonds, cut power over the threshold and flare gently.',6);if(SET.ctl==0&&mode=='free'&&!isTouch)toast('<b>EASY CONTROLS</b>Hold <kbd>R</kbd> for throttle — the plane lifts off by itself. <kbd>W</kbd><kbd>S</kbd> / arrows pitch, <kbd>A</kbd><kbd>D</kbd> roll. Let go and it levels out.',7);if(isTouch&&SET.ctl==0&&grounded&&mode=='free'){thr=1;toast('<b>TAKEOFF</b>Throttle is full and the plane lifts off by itself. Drag the right stick to steer — let go and it levels out. Tip: tap ⋯ → TILT to steer by tilting the phone.',7)}if(mode=='speed')toast('<b>SPEED RECORD</b>Full throttle <kbd>R</kbd>, tap <kbd>S</kbd> to climb to 25–35 km where the air is thin — how fast can you go? Aim for Mach 6!',7);if(mode=='dogfight')toast('<b>DOGFIGHT</b>Chase and shoot! <kbd>V</kbd> guns · <kbd>N</kbd> homing missile (aim to lock) · <kbd>K</kbd> flares · Bots: '+DNAMES[SET.bot]+' (change in Options)',6);if(mode=='race')toast('<b>RING RACE</b>Fly through the glowing gold ring. Follow the yellow arrow! Press T for colour smoke.',5)}
  started=true;menu='none';hasFlight=true;$('ov').style.display='none';$('pm').style.display='none'}
 function showHome(){started=false;menu='home';saveStats();$('pm').style.display='none';$('ov').style.display='flex';showTab('welcome');refresh()}
 const assist={crash:true,stall:false,coord:false,level:false};
@@ -602,7 +616,7 @@ addEventListener('touchstart',()=>{isTouch=true},{passive:true});
 addEventListener('pointerdown',()=>{initAudio();if(AC&&AC.state=='suspended')AC.resume()},{passive:true});
 (function(){const pad=$('stick'),kn=$('knob');let id=null;
  const mv=e=>{const r=pad.getBoundingClientRect(),Rr=r.width/2;let dx=(e.clientX-r.left-Rr)/Rr,dy=(e.clientY-r.top-Rr)/Rr;const l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l}
-  kn.style.transform='translate('+dx*Rr*.6+'px,'+dy*Rr*.6+'px)';TC.ro=Math.abs(dx)<.08?0:dx;TC.pi=Math.abs(dy)<.08?0:-dy};
+  kn.style.transform='translate('+dx*Rr*.6+'px,'+dy*Rr*.6+'px)';const cv=v=>Math.abs(v)<.07?0:Math.sign(v)*Math.pow((Math.abs(v)-.07)/.93,1.35);TC.ro=cv(dx);TC.pi=-cv(dy)};
  pad.addEventListener('pointerdown',e=>{id=e.pointerId;pad.setPointerCapture(id);mv(e);e.preventDefault()});
  pad.addEventListener('pointermove',e=>{if(e.pointerId==id)mv(e)});
  const up=e=>{if(e.pointerId==id){id=null;TC.ro=TC.pi=0;kn.style.transform=''}};
@@ -615,8 +629,29 @@ addEventListener('pointerdown',()=>{initAudio();if(AC&&AC.state=='suspended')AC.
  hold($('tb-l'),()=>TC.ya=1,()=>TC.ya=0);hold($('tb-r'),()=>TC.ya=-1,()=>TC.ya=0);
  hold($('tb-br'),()=>K.Space=true,()=>K.Space=false);
  tap($('tb-fl'),cycleFlaps);tap($('tb-gr'),toggleGear);tap($('tb-lt'),toggleLights);tap($('tb-cm'),cycleView);tap($('tb-at'),toggleAT);hold($('tb-fi'),()=>K.KeyV=true,()=>K.KeyV=false);tap($('tb-ms'),fireMissile);tap($('tb-fr'),flares);tap($('tb-ch'),()=>{chatI=(chatI+1)%4;netChat(chatI)});tap($('tb-sm'),toggleSmoke);
- tap($('tb-ps'),()=>{if(started)showPause()});tap($('rst'),restartFlight)})();
-function tcStep(){if(!isTouch)return;$('tc').style.display=started?'block':'none';$('thrf').style.height=thr*100+'%';$('rst').style.display=crashed||doneShown?'block':'none';
+ tap($('tb-ps'),()=>{if(started)showPause()});tap($('rst'),restartFlight);
+ tap($('tb-fs'),()=>tryFS(true));tap($('rot-fs'),()=>tryFS(true));tap($('tb-mo'),()=>$('tmore').classList.toggle('open'));
+ tap($('tb-tl'),()=>setTilt(!SET.tilt));tap($('tb-rc'),()=>{tiltCal();toast('Tilt re-centred',1.2)})})();
+// ---- fullscreen, landscape lock, tilt steering
+function tryFS(force){try{const e=document.documentElement;if(!document.fullscreenElement&&!document.webkitFullscreenElement){const f=e.requestFullscreen||e.webkitRequestFullscreen;if(f){const r=f.call(e);if(r&&r.catch)r.catch(()=>{})}}
+  if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}
+let tiltA=[0,0],tiltRaw=null;
+function gravOf(e){const b=(e.beta||0)*D2R,g=(e.gamma||0)*D2R,gx=Math.cos(b)*Math.sin(g),gy=-Math.sin(b);const ang=((screen.orientation&&screen.orientation.angle!=null?screen.orientation.angle:(window.orientation||0))%360+360)%360;
+ let sr,su;if(ang==90){sr=-gy;su=gx}else if(ang==270){sr=gy;su=-gx}else if(ang==180){sr=-gx;su=-gy}else{sr=gx;su=gy}
+ return [Math.asin(clamp(sr,-1,1))/D2R,Math.asin(clamp(su,-1,1))/D2R]}
+function tiltCal(){if(tiltRaw)tiltA=gravOf(tiltRaw)}
+function onTilt(e){if(e.beta==null)return;tiltRaw=e;if(!SET.tilt||!started||crashed){TT.ro=TT.pi=0;return}const g=gravOf(e),dr=g[0]-tiltA[0],dp=g[1]-tiltA[1];
+ const f=(v,range)=>{const a=Math.abs(v);return a<3?0:Math.sign(v)*clamp((a-3)/(range-3),0,1)};TT.ro=f(dr,32);TT.pi=f(dp,22)}
+let tiltOn=false;
+function setTilt(on){if(on){const go=()=>{if(!tiltOn){addEventListener('deviceorientation',onTilt);tiltOn=true}SET.tilt=1;saveSet();setTimeout(()=>{tiltCal();toast('<b>TILT STEERING ON</b>Hold the phone like a steering wheel — tilt left/right to bank, tilt the top away to dive. Tap RECENTER to reset.',4)},250);updTilt()};
+  if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().then(r=>{if(r=='granted')go();else toast('Tilt permission denied',2)}).catch(()=>toast('Tilt not available',2));else go()}
+ else{SET.tilt=0;saveSet();TT.ro=TT.pi=0;updTilt()}}
+function updTilt(){const t=$('tb-tl');if(t){t.classList.toggle('on',!!SET.tilt);t.textContent=SET.tilt?'TILT ON':'TILT';$('tb-rc').style.display=SET.tilt?'':'none'}}
+if(SET.tilt&&isTouch&&!(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)){addEventListener('deviceorientation',onTilt);tiltOn=true}
+updTilt();
+addEventListener('gesturestart',e=>e.preventDefault());addEventListener('dblclick',e=>{if(isTouch)e.preventDefault()});
+document.addEventListener('contextmenu',e=>{if(isTouch)e.preventDefault()});
+function tcStep(){if(!isTouch)return;$('tc').style.display=started?'block':'none';$('rot').style.display=(innerHeight>innerWidth*1.05)?'flex':'none';$('thrf').style.height=thr*100+'%';$('rst').style.display=crashed||doneShown?'block':'none';
  $('tb-gr').classList.toggle('on',gear);$('tb-lt').classList.toggle('on',lights);$('tb-at').classList.toggle('on',atOn);$('tb-sm').classList.toggle('on',smokeOn);$('tb-fl').textContent='FLAPS '+['0','1','F'][flap];$('tb-gr').style.display=P.retract?'':'none';$('tb-ch').style.display=NET.on&&NET.peers.size?'':'none';for(const i of['fi','ms','fr'])$('tb-'+i).style.display=mode=='dogfight'?'':'none'}
 
 // ================= HUD (2D canvas overlay) =================
@@ -1103,7 +1138,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min(.1,(now-last)
  if(SET.wind){const amp=SET.wind==2?.09:.035;turb.set(Math.sin(t*2.3)*Math.sin(t*.9+1),Math.sin(t*1.7+3),Math.sin(t*2.9+5)*Math.sin(t*1.1)).multiplyScalar(amp);wind.copy(windBase).multiplyScalar(1+gustK*(SET.wind==2?.45:.3)).add(V3.set(Math.sin(t*1.3)*SET.wind,Math.sin(t*2.1)*SET.wind*.4,Math.cos(t*.9)*SET.wind))}else{wind.set(0,0,0);turb.set(0,0,0)}
  if(started&&!crashed){
   const kp=(K.KeyW||K.ArrowUp?1:0)-(K.KeyS||K.ArrowDown?1:0),kr=(K.KeyD||K.ArrowRight?1:0)-(K.KeyA||K.ArrowLeft?1:0),ky=(K.KeyQ?1:0)-(K.KeyE?1:0);
-  const inp={pi:clamp(kp+TC.pi+GP.pi,-1,1),ro:clamp(kr+TC.ro+GP.ro,-1,1),ya:clamp(ky+TC.ya+GP.ya,-1,1),th:clamp((K.KeyR||K.ShiftLeft||K.ShiftRight?1:0)-(K.KeyF||K.ControlLeft||K.ControlRight?1:0)+GP.th,-1,1)};
+  const inp={pi:clamp(kp+(TC.pi||TT.pi)+GP.pi,-1,1),ro:clamp(kr+(TC.ro||TT.ro)+GP.ro,-1,1),ya:clamp(ky+TC.ya+GP.ya,-1,1),th:clamp((K.KeyR||K.ShiftLeft||K.ShiftRight?1:0)-(K.KeyF||K.ControlLeft||K.ControlRight?1:0)+GP.th,-1,1)};
   prevPos.copy(pos);if(cd>0){const c0=Math.ceil(cd);cd-=dt;accT=0;if(Math.ceil(cd)!=c0)click();if(cd<=0)toast('<b>GO!</b>',1.2)}else{accT+=dt;let n=0;while(accT>=STEP&&n<14&&!crashed){phys(STEP,inp);accT-=STEP;n++}if(n>=14)accT=0}
   stats.t+=dt;flightT+=dt;stats.alt=Math.max(stats.alt,pos.y);stats.spd=Math.max(stats.spd,speed);stats.dist+=Math.hypot(vel.x,vel.z)*dt/1000}
  // derived flight info & warnings
