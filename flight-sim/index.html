@@ -74,7 +74,7 @@ kbd{background:#fff2;border-radius:4px;padding:1px 6px;font-family:ui-monospace,
 <button class="tile t-ac" onclick="startFlight(true,'free')"><div class="art a-sun"><svg class="pl"><use href="#pl"/></svg></div><div class="cap"><i class="chev">›</i><div><b>FREE FLIGHT</b><small>Take off from <span id="loc"></span> in the <span id="ac-name"></span></small></div></div></button>
 <button class="tile t-ac" onclick="startFlight(true,'race')"><div class="art a-ring"><i style="width:120px;height:120px;left:12%;top:18%"></i><i style="width:80px;height:80px;left:42%;top:26%;opacity:.8"></i><i style="width:50px;height:50px;left:64%;top:32%;opacity:.6"></i><svg class="pl y"><use href="#pl"/></svg><em class="badge g">NEW</em></div><div class="cap"><i class="chev">›</i><div><b>RING RACE</b><small>Fly through 10 golden rings as fast as you can. Best: <span id="rbest"></span></small></div></div></button>
 <button class="tile t-ac" onclick="startFlight(true,'challenge')"><div class="art a-app"><svg class="pl"><use href="#pl"/></svg><div class="rw"></div></div><div class="cap"><i class="chev">›</i><div><b>LANDING CHALLENGE</b><small>Final approach to runway 36R, scored out of 100. Best: <span id="best"></span></small></div></div></button>
-<button class="tile t-ac" onclick="startFlight(true,'dogfight')"><div class="art a-df"><svg class="pl"><use href="#pl"/></svg><svg class="pl e"><use href="#pl"/></svg><i class="tr"></i><i class="tr t2"></i><em class="badge g">NEW</em></div><div class="cap"><i class="chev">›</i><div><b>DOGFIGHT</b><small>Guns, homing missiles and flares. Hunt bots or your friends. Kills: <span id="dfk"></span></small></div></div></button>
+<button class="tile t-ac" onclick="startFlight(true,'dogfight')"><div class="art a-df"><svg class="pl"><use href="#pl"/></svg><svg class="pl e"><use href="#pl"/></svg><i class="tr"></i><i class="tr t2"></i><em class="badge g">NEW</em></div><div class="cap"><i class="chev">›</i><div><b>DOGFIGHT</b><small>Guns, homing missiles and flares. Hunt bots or your friends. Bots: <span id="dfl"></span> · Kills: <span id="dfk"></span></small></div></div></button>
 <button class="tile t-ac" id="c0" onclick="pick(0)"><div class="art a-sky"><svg class="pl y"><use href="#pl"/></svg><em class="badge g">SELECTED</em></div><div class="cap"><div><b>CESSNA 172</b><small>Light prop trainer. Easy and forgiving, lands on grass.</small></div></div></button>
 <button class="tile t-ac" id="c1" onclick="pick(1)"><div class="art a-jet"><svg class="pl"><use href="#pl"/></svg><em class="badge g">SELECTED</em></div><div class="cap"><div><b>AIRBUS A320</b><small>Twin-jet airliner. Needs flaps, gear and a runway.</small></div></div></button>
 <button class="tile t-ac" id="c2" onclick="pick(2)"><div class="art a-fig"><svg class="pl"><use href="#pl"/></svg><em class="badge g">SELECTED</em></div><div class="cap"><div><b>FIGHTER JET</b><small>Afterburner, fast rolls, breaks the sound barrier.</small></div></div></button>
@@ -116,7 +116,7 @@ kbd{background:#fff2;border-radius:4px;padding:1px 6px;font-family:ui-monospace,
 </div></div>
 <section id="pm-act" class="panel" style="display:none"><h2>Activities</h2>
 <div class="row"><span>Restart flight</span><button class="sg on" onclick="restartFlight()">Restart</button></div>
-<div class="row"><span>Dogfight</span><button class="sg" onclick="pmMode('dogfight')">Start dogfight</button></div><div class="row"><span>Ring race</span><button class="sg" onclick="pmMode('race')">Start race</button></div><div class="row"><span>Multiplayer</span><span id="pm-net"></span></div><div class="row"><span>Landing challenge</span><button class="sg" onclick="pmMode('challenge')">Start approach</button></div>
+<div class="row"><span>Dogfight</span><button class="sg" onclick="pmMode('dogfight')">Start dogfight</button></div><div class="row"><span>Dogfight bot level</span><span id="pm-bot"></span></div><div class="row"><span>Ring race</span><button class="sg" onclick="pmMode('race')">Start race</button></div><div class="row"><span>Multiplayer</span><span id="pm-net"></span></div><div class="row"><span>Landing challenge</span><button class="sg" onclick="pmMode('challenge')">Start approach</button></div>
 <div class="row"><span>Aircraft</span><span id="pm-ac"></span></div>
 <div class="row"><span>Start airport (free flight)</span><span id="pm-st"></span></div>
 <div class="row"><span>Main menu</span><button class="sg" onclick="showHome()">Go to main menu</button></div>
@@ -164,8 +164,9 @@ const clamp=(v,a,b)=>v<a?a:v>b?b:v,ss=k=>{k=clamp(k,0,1);return k*k*(3-2*k)},rnd
 function ld(k){try{return JSON.parse(localStorage.getItem(k))||{}}catch(e){return {}}}
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 const isMob=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-const SET=Object.assign({snd:true,tod:0,cam:0,gfx:isMob?0:1,wind:0,hud:0},ld('fs-set'));
+const SET=Object.assign({snd:true,tod:0,cam:0,gfx:isMob?0:1,wind:0,hud:0,bot:0},ld('fs-set'));
 const saveSet=()=>sv('fs-set',SET);
+const DNAMES=['Easy','Normal','Hard'];
 // compass heading of a horizontal direction (x,z): +z = north, -x = east
 const hdgOf=(x,z)=>(Math.atan2(-x,z)/D2R+360)%360;
 const angDiff=(a,b)=>((a-b+540)%360)-180;
@@ -539,7 +540,8 @@ function setView(n){SET.cam=n;view=(n+2)%3;cycleView();renderOpts()}
 function applyGfx(){R.setPixelRatio(SET.gfx?Math.min(devicePixelRatio,2):Math.min(devicePixelRatio,1.25));R.setSize(innerWidth,innerHeight);sun.castShadow=!!SET.gfx;sizeHud()}
 function setGfx(n){if(SET.gfx==n)return;SET.gfx=n;applyGfx();setTod(SET.tod);rebuildTerrain()}
 const OPTS=[['Sound',['On','Off'],()=>SET.snd?0:1,i=>setSound(i==0)],['Time of day',['Day','Sunset','Dusk','Night'],()=>SET.tod,setTod],['Camera',['Chase','Orbit','Cockpit'],()=>SET.cam,setView],
- ['Graphics',['Low','High'],()=>SET.gfx,setGfx],['Wind & turbulence',['Calm','Light','Strong'],()=>SET.wind,i=>{SET.wind=i;initWind()}],['HUD',['Full','Minimal','Off'],()=>SET.hud,i=>SET.hud=i]];
+ ['Graphics',['Low','High'],()=>SET.gfx,setGfx],['Wind & turbulence',['Calm','Light','Strong'],()=>SET.wind,i=>{SET.wind=i;initWind()}],['HUD',['Full','Minimal','Off'],()=>SET.hud,i=>SET.hud=i],['Dogfight bots',DNAMES,()=>SET.bot,setBot]];
+function setBot(i){SET.bot=i;saveSet();for(const b of bots)S.remove(b.grp);bots.length=0;if(mode=='dogfight'&&useBots())spawnBots();if(started)toast('Bot level: <b>'+DNAMES[i]+'</b>',1.8);renderOpts();renderAct()}
 function optSet(n,i){OPTS[n][3](i);saveSet();renderOpts()}
 function renderOpts(){const h=OPTS.map(([l,arr,cur],n)=>'<div class="row"><span>'+l+'</span><span>'+arr.map((t,i)=>'<button class="sg'+(i==cur()?' on':'')+'" onclick="optSet('+n+','+i+')">'+t+'</button>').join('')+'</span></div>').join('');$('o-list').innerHTML=h;$('pm-list').innerHTML=h}
 function seg(id,arr,cur,fn){$(id).innerHTML=arr.map((t,i)=>'<button class="sg'+(i==cur?' on':'')+'" onclick="'+fn+'('+i+')">'+t+'</button>').join('')}
@@ -547,10 +549,10 @@ function fmtT(t){const h=Math.floor(t/3600),m=Math.floor(t%3600/60),sc=Math.floo
 function renderProfile(){$('p-stats').innerHTML=[['Flights',stats.flights],['Safe landings',stats.land],['Crashes',stats.crash],['Best landing score',stats.best?stats.best+' / 100':'—'],['Best ring race',stats.race?fmtR(stats.race):'—'],['Rings flown through',stats.rings],['Dogfight kills',stats.kills],['Flight time',fmtT(stats.t)],['Distance flown',stats.dist.toFixed(1)+' km'],['Max altitude',Math.round(stats.alt)+' m'],['Top speed',Math.round(stats.spd*3.6)+' km/h']].map(([a,b])=>'<div class="stat"><b>'+b+'</b><span>'+a+'</span></div>').join('')}
 function resetStats(){Object.assign(stats,{flights:0,land:0,crash:0,t:0,alt:0,spd:0,best:0,dist:0,race:0,rings:0,kills:0});saveStats();renderProfile();refresh()}
 function showTab(n){['welcome','profile','options','controls','online'].forEach(t=>{$('p-'+t).style.display=t==n?'':'none';const b=$('t-'+t);if(b)b.classList.toggle('on',t==n)});if(n=='profile')renderProfile();if(n=='options')renderOpts();if(n=='online'){$('n-name').value=SET.name;renderNetUI()}}
-function refresh(){[0,1,2,3].forEach(i=>{$('c'+i).classList.toggle('sel',P===TYPES[i]);$('c'+i).querySelector('.badge').style.display=P===TYPES[i]?'':'none'});$('loc').textContent=STARTS[startIdx];$('ac-name').textContent=P.name;$('best').textContent=stats.best?stats.best+'/100':'—';$('rbest').textContent=stats.race?fmtR(stats.race):'—';$('dfk').textContent=stats.kills;
+function refresh(){[0,1,2,3].forEach(i=>{$('c'+i).classList.toggle('sel',P===TYPES[i]);$('c'+i).querySelector('.badge').style.display=P===TYPES[i]?'':'none'});$('loc').textContent=STARTS[startIdx];$('ac-name').textContent=P.name;$('best').textContent=stats.best?stats.best+'/100':'—';$('rbest').textContent=stats.race?fmtR(stats.race):'—';$('dfk').textContent=stats.kills;$('dfl').textContent=DNAMES[SET.bot];
  const r=hasFlight&&!crashed;$('resbar').style.display=r?'':'none';$('resk').style.display=r?'':'none'}
 function pick(n){setType(n);mode='free';reset();hasFlight=false;refresh()}
-function startFlight(fresh,md){initAudio();if(AC&&AC.state=='suspended')AC.resume();if(fresh){if(md)mode=md;reset();stats.flights++;saveStats();if(mode=='challenge')toast('<b>LANDING CHALLENGE</b>Runway 36R ahead. Follow the glide-path diamonds, cut power over the threshold and flare gently.',6);if(mode=='dogfight')toast('<b>DOGFIGHT</b>Chase and shoot! <kbd>V</kbd> guns · <kbd>N</kbd> homing missile (aim to lock) · <kbd>K</kbd> flares',6);if(mode=='race')toast('<b>RING RACE</b>Fly through the glowing gold ring. Follow the yellow arrow! Press T for colour smoke.',5)}
+function startFlight(fresh,md){initAudio();if(AC&&AC.state=='suspended')AC.resume();if(fresh){if(md)mode=md;reset();stats.flights++;saveStats();if(mode=='challenge')toast('<b>LANDING CHALLENGE</b>Runway 36R ahead. Follow the glide-path diamonds, cut power over the threshold and flare gently.',6);if(mode=='dogfight')toast('<b>DOGFIGHT</b>Chase and shoot! <kbd>V</kbd> guns · <kbd>N</kbd> homing missile (aim to lock) · <kbd>K</kbd> flares · Bots: '+DNAMES[SET.bot]+' (change in Options)',6);if(mode=='race')toast('<b>RING RACE</b>Fly through the glowing gold ring. Follow the yellow arrow! Press T for colour smoke.',5)}
  started=true;menu='none';hasFlight=true;$('ov').style.display='none';$('pm').style.display='none'}
 function showHome(){started=false;menu='home';saveStats();$('pm').style.display='none';$('ov').style.display='flex';showTab('welcome');refresh()}
 const assist={crash:true,stall:false,coord:false,level:false};
@@ -562,7 +564,7 @@ function pmPick(n){setType(n);reset();resumeFlight()}
 function pmStart(i){startIdx=i;mode='free';reset();resumeFlight()}
 function pmMode(m){mode=m;restartFlight();if(m=='dogfight')toast('<b>DOGFIGHT</b>V = guns · N = missile · K = flares. Keep enemies in your gunsight!',5);if(m=='challenge')toast('<b>LANDING CHALLENGE</b>Runway 36R ahead. Good luck!',4);if(m=='race')toast('<b>RING RACE</b>Go go go!',3)}
 function setAs(k,v){assist[k]=v;renderAssist()}
-function renderAct(){renderNetUI();seg('pm-ac',AC_NAMES,P.key,'pmPick');seg('pm-st',['36R','36L','27','Southwest','Northeast'],mode=='free'?startIdx:-1,'pmStart')}
+function renderAct(){renderNetUI();seg('pm-bot',DNAMES,SET.bot,'setBot');seg('pm-ac',AC_NAMES,P.key,'pmPick');seg('pm-st',['36R','36L','27','Southwest','Northeast'],mode=='free'?startIdx:-1,'pmStart')}
 function renderAssist(){$('pm-as').innerHTML=[['Crash damage','crash'],['Stall protection','stall'],['Coordinated turns','coord'],['Wing leveler','level']].map(([l,k])=>'<div class="row"><span>'+l+'</span><span>'+['On','Off'].map((t,i)=>'<button class="sg'+((assist[k]?0:1)==i?' on':'')+'" onclick="setAs(\''+k+'\','+(i==0)+')">'+t+'</button>').join('')+'</span></div>').join('')}
 const CTL=[['R','F','throttle up / down'],['W','S','pitch down / up'],['A','D','roll (steer on ground)'],['Q','E','rudder'],['X','','flaps (UP / 1 / FULL)'],['G','','landing gear (A320)'],['Space','B','brakes'],['L','','landing light'],['C','','camera'],['H','','HUD: full / minimal / off'],['T','','colour smoke trail'],['V','Space','machine guns (dogfight)'],['N','','fire homing missile (locks the target in your gunsight)'],['K','','drop flares to fool missiles'],['5','8','quick chat (multiplayer)'],['1','4','choose aircraft (1 Cessna · 2 A320 · 3 Fighter · 4 Jumbo)'],['M','','mute'],['Enter','','restart after crash'],['Esc','P','pause menu'],['Mouse','','drag to look, wheel to zoom'],['Pad','','sticks fly, RT/LT throttle, A brake (guns in dogfight), B gear, X flaps, Y camera, RB smoke (missile in dogfight), Back flares']];
 document.querySelectorAll('.ctl-list').forEach(el=>el.innerHTML=CTL.map(([a,b,t])=>'<div><kbd>'+a+'</kbd>'+(b?'<kbd>'+b+'</kbd>':'')+' '+t+'</div>').join(''));
@@ -911,6 +913,11 @@ function drawBoard(s,touch,Wd,Hd,px,py,pw,ph){const df=mode=='dogfight';if(!(NET
   hx.fillText(((race||df)?(i+1)+'. ':'')+r.n,x+22*s,yy);hx.textAlign='right';hx.fillStyle='#ffd23f';hx.fillText(race?(r.ft?fmtR(r.ft):'ring '+r.r+'/10'):df?String(r.kl):(r.k>=0?AC_NAMES[r.k]:''),x+w-8*s,yy)});hx.restore()}
 
 // ================= dogfight: guns, homing missiles, flares, bots =================
+const DIFF=[
+ {n:2,hp:30,turn:.45,sp:.12,dmg:2,cos:.9985,rng:450,rate:.3,mi:[32,48],mr:[800,2000],mc:.97,mdmg:25,mturn:1.5,ev:.1,sk:.78,grace:6},
+ {n:3,hp:40,turn:.7,sp:.06,dmg:2.5,cos:.996,rng:650,rate:.16,mi:[18,27],mr:[650,2400],mc:.95,mdmg:35,mturn:2.1,ev:.3,sk:.88,grace:2.5},
+ {n:3,hp:40,turn:.9,sp:.025,dmg:3.5,cos:.995,rng:750,rate:.12,mi:[12,19],mr:[600,2600],mc:.93,mdmg:45,mturn:2.7,ev:.45,sk:.92,grace:0}];
+const DL=()=>DIFF[SET.bot]||DIFF[0];
 const NB=260,NMS=14,bots=[],ME={isMe:true,id:NET.id,get pos(){return pos},get tv(){return vel}};
 let hp=100,msl=4,flN=6,mslCool=0,mslRegen=0,flRegen=0,respT=0,lock=null,dfKills=0,dfDeaths=0,dfRespawn=false,hitFlash=0,dmgFlash=0,gunT=0,gunNet=0,mid=0,mI=0,lastHit=0;
 const othersArr=[];function others(){othersArr.length=0;for(const p of NET.peers.values())othersArr.push(p);for(const b of bots)othersArr.push(b);return othersArr}
@@ -926,7 +933,7 @@ const tgtOf=id=>id===NET.id?ME:(NET.peers.get(id)||bots.find(b=>b.id===id)||null
 const useBots=()=>!(NET.on&&NET.peers.size>0);
 function segDist(a,b,p){const abx=b.x-a.x,aby=b.y-a.y,abz=b.z-a.z,l2=abx*abx+aby*aby+abz*abz;let t=l2>0?((p.x-a.x)*abx+(p.y-a.y)*aby+(p.z-a.z)*abz)/l2:0;t=t<0?0:t>1?1:t;const dx=a.x+abx*t-p.x,dy=a.y+aby*t-p.y,dz=a.z+abz*t-p.z;return Math.sqrt(dx*dx+dy*dy+dz*dz)}
 function boomAt(p,big){for(let i=0;i<(big?22:8);i++)puff(p.clone(),1);for(let i=0;i<7;i++)puff(p.clone(),0);firework(p.clone(),big);const d=p.distanceTo(pos);burst(2200,90,big?1.4:.6,clamp(700/Math.max(80,d),0,big?.9:.5))}
-function spawnMissile(id,p,v,tg,own,oid,on){let m=ms.find(x=>!x.a);if(!m){m=ms.reduce((a,b)=>a.t>b.t?a:b)}m.a=1;m.id=id;m.p.copy(p);m.sp=Math.max(60,v.length());m.d.copy(v).normalize();m.t=0;m.tgt=tg;m.own=own;m.oid=oid;m.on=on;m.pd=1e9;m.sm=0;m.g.visible=true;burst(900,200,.7,clamp(500/Math.max(60,p.distanceTo(pos)),0,.4),'bandpass')}
+function spawnMissile(id,p,v,tg,own,oid,on,dmg,turn){let m=ms.find(x=>!x.a);if(!m){m=ms.reduce((a,b)=>a.t>b.t?a:b)}m.a=1;m.id=id;m.p.copy(p);m.sp=Math.max(60,v.length());m.d.copy(v).normalize();m.t=0;m.tgt=tg;m.own=own;m.oid=oid;m.on=on;m.pd=1e9;m.sm=0;m.dmg=dmg||45;m.turn=turn||2.7;m.g.visible=true;burst(900,200,.7,clamp(500/Math.max(60,p.distanceTo(pos)),0,.4),'bandpass')}
 function fireMissile(){if(mode!='dogfight'||!started||crashed||cd>0||grounded||msl<=0||mslCool>0)return;msl--;mslCool=.8;
  tV.copy(pos).addScaledVector(lW,((mI++%2)?1:-1)*P.span*.28).addScaledVector(uW,-1.2);const v=new T.Vector3().copy(vel).addScaledVector(fW,25),tg=lock&&!lock.crashed?lock:null,id=NET.id+'m'+(mid++);
  spawnMissile(id,tV,v,tg,0,NET.id,SET.name);netSend({t:'msl',i:id,p:[r2(tV.x),r2(tV.y),r2(tV.z)],v:[r2(v.x),r2(v.y),r2(v.z)],tg:tg?tg.id:''})}
@@ -938,10 +945,10 @@ function damageMe(d,id,name){if(crashed||mode!='dogfight')return;hp-=d;dmgFlash=
  if(id&&!String(id).startsWith('bot')&&performance.now()-lastHit>60){lastHit=performance.now();netSend({t:'hit',to:id})}
  if(hp<=0){hp=0;crash('Shot down by '+name);netSend({t:'kill',to:id,kn:name,vn:SET.name});if(String(id).startsWith('bot')){const b=bots.find(x=>x.id===id);if(b)b.kl++}}}
 function damageBot(b,d){if(b.crashed)return;b.hp-=d;hitFlash=.25;if(b.hp<=0){b.crashed=true;b.grp.visible=false;b.dead=5;dfKills++;stats.kills++;saveStats();boomAt(b.pos,true);toast('<b>🎯 SHOT DOWN</b>'+b.name+' · kills '+dfKills,2.5);celebrate();for(const m of ms)if(m.tgt===b)m.tgt=null}}
-function mkBot(i){const b=mkPeer('bot'+i);b.name='BOT '+(i+1);b.hue=0;b.bot=true;b.init=true;b.kl=0;b.sp=100;b.f=new T.Vector3(0,0,1);b.roll=0;b.mslT=8+Math.random()*8;b.gunT=0;b.evade=0;b.evDir=1;b.dead=0;b.hp=40;setPeerModel(b,2);if(b.gearObj)b.gearObj.visible=false;return b}
-function placeBot(b){const a=Math.random()*6.283,r=1500+Math.random()*900;b.pos.set(pos.x+Math.sin(a)*r,0,pos.z+Math.cos(a)*r);b.pos.y=Math.max(G(b.pos.x,b.pos.z)+220,pos.y+rnd(300));b.f.set(pos.x-b.pos.x,0,pos.z-b.pos.z).normalize();b.hp=40;b.crashed=false;b.grp.visible=true;b.evade=0;b.tv.copy(b.f).multiplyScalar(b.sp);b.grp.position.copy(b.pos)}
+function mkBot(i){const b=mkPeer('bot'+i);b.name='BOT '+(i+1);b.hue=0;b.bot=true;b.init=true;b.kl=0;b.sp=100;b.f=new T.Vector3(0,0,1);b.roll=0;b.mslT=DL().mi[0]*.7+Math.random()*8;b.gunT=0;b.evade=0;b.evDir=1;b.dead=0;b.hp=DL().hp;b.grace=DL().grace;setPeerModel(b,2);if(b.gearObj)b.gearObj.visible=false;return b}
+function placeBot(b){const a=Math.random()*6.283,r=1500+Math.random()*900;b.pos.set(pos.x+Math.sin(a)*r,0,pos.z+Math.cos(a)*r);b.pos.y=Math.max(G(b.pos.x,b.pos.z)+220,pos.y+rnd(300));b.f.set(pos.x-b.pos.x,0,pos.z-b.pos.z).normalize();b.hp=DL().hp;b.grace=DL().grace;b.crashed=false;b.grp.visible=true;b.evade=0;b.tv.copy(b.f).multiplyScalar(b.sp);b.grp.position.copy(b.pos)}
 function clearWeapons(){bul.forEach(b=>b.a=0);ms.forEach(m=>{m.a=0;m.g.visible=false});for(const b of bots)S.remove(b.grp);bots.length=0;lock=null}
-function spawnBots(){for(let i=0;i<3;i++){const b=mkBot(i);bots.push(b);placeBot(b)}}
+function spawnBots(){for(let i=0;i<DL().n;i++){const b=mkBot(i);bots.push(b);placeBot(b)}}
 function airStart(P0,dir,v){pos.copy(P0);q.setFromAxisAngle(ay,Math.atan2(dir.x,dir.z));vel.copy(dir).multiplyScalar(v);speed=v;gear=!P.retract;gearT=gear?1:0;flap=0;
  const qd=.6*v*v,CLr=P.m*9.81/(qd*P.S),CD=P.cd0+P.k*CLr*CLr+(gear?P.gcd:0);thr=clamp(qd*P.S*CD/(P.T*Math.max(.15,1-v/P.vt))+.08,.1,1);eng=thr;air=true;grounded=false;rot(ax,-(CLr-P.cl0)/P.cla)}
 function setupDogfight(){hp=100;msl=4;flN=6;mslCool=0;respT=0;lock=null;
@@ -950,26 +957,26 @@ function setupDogfight(){hp=100;msl=4;flN=6;mslCool=0;respT=0;lock=null;
  if(!dfRespawn){dfKills=dfDeaths=0;clearWeapons();if(useBots())spawnBots()}}
 function stepBots(dt){if(mode=='dogfight'&&bots.length&&!useBots()){clearWeapons();feed('Bots left — pilots only!')}
  for(const b of bots){if(b.crashed){b.dead-=dt;if(b.dead<=0)placeBot(b);continue}
-  const live=started&&!crashed&&cd<=0;tV.copy(pos).sub(b.pos);const dist=tV.length()||1,cosA=b.f.dot(tV)/dist;
+  const D=DL(),live=started&&!crashed&&cd<=0;if(live&&b.grace>0)b.grace-=dt;tV.copy(pos).sub(b.pos);const dist=tV.length()||1,cosA=b.f.dot(tV)/dist;
   const lead=tV2.copy(pos).addScaledVector(vel,Math.min(2,dist/900));let d=lead.sub(b.pos).normalize();
   if(crashed)d.set(b.f.x,0,b.f.z).normalize().add(tV3.set(.2,0,0)).normalize();
   if(b.evade>0){b.evade-=dt;d=tV3.copy(b.f).applyAxisAngle(ay,b.evDir*1.3);d.y+=.2*b.evDir}
   const gr=G(b.pos.x,b.pos.z),ahead=G(b.pos.x+b.f.x*500,b.pos.z+b.f.z*500);if(b.pos.y<gr+140||ahead>b.pos.y-90)d.y=Math.max(d.y,.55);if(b.pos.y>2400)d.y=Math.min(d.y,-.2);d.normalize();
-  const ang=Math.acos(clamp(b.f.dot(d),-1,1)),rate=(b.evade>0?1.5:.9)*(P.key==0?.85:1),stp=Math.min(ang,rate*dt);tV3.crossVectors(b.f,d);let yawR=0;
+  const ang=Math.acos(clamp(b.f.dot(d),-1,1)),rate=(b.evade>0?D.turn*1.6:D.turn)*(P.key==0?.85:1),stp=Math.min(ang,rate*dt);tV3.crossVectors(b.f,d);let yawR=0;
   if(tV3.lengthSq()>1e-9&&stp>0){tV3.normalize();yawR=tV3.y*stp/dt;b.f.applyAxisAngle(tV3,stp)}b.f.normalize();
   b.roll+=(clamp(-yawR*1.1,-1.3,1.3)-b.roll)*Math.min(1,dt*4);
-  const tsp=clamp(Math.max(65,speed*.92+15),65,320);b.sp+=(tsp-b.sp)*Math.min(1,dt*.5);b.pos.addScaledVector(b.f,b.sp*dt);b.tv.copy(b.f).multiplyScalar(b.sp);
+  const tsp=clamp(Math.max(65,speed*D.sk+15),65,320);b.sp+=(tsp-b.sp)*Math.min(1,dt*.5);b.pos.addScaledVector(b.f,b.sp*dt);b.tv.copy(b.f).multiplyScalar(b.sp);
   bd.position.set(0,0,0);bd.lookAt(b.f.x,b.f.y,b.f.z);b.quat.copy(bd.quaternion).multiply(tmp.setFromAxisAngle(az,b.roll));b.grp.position.copy(b.pos);b.grp.quaternion.copy(b.quat);b.grp.visible=true;
-  if(live&&mode=='dogfight'){b.gunT-=dt;
-   if(dist<750&&cosA>.995&&b.gunT<=0){b.gunT=.12;tV2.copy(b.f);tV2.x+=rnd(.025);tV2.y+=rnd(.025);tV2.z+=rnd(.025);tV2.normalize().multiplyScalar(820).add(b.tv);addBullet(tV3.copy(b.pos).addScaledVector(b.f,12),tV2,2,b.id,3.5,b.name);if(AC&&dist<1500)burst(2800,900,.05,.07)}
-   b.mslT-=dt;if(b.mslT<=0&&dist>600&&dist<2600&&cosA>.93){b.mslT=12+Math.random()*7;tV2.copy(b.f).multiplyScalar(b.sp+25);spawnMissile(b.id+'m'+(mid++),b.pos,tV2,ME,2,b.id,b.name)}}
-  for(const m of ms)if(m.a&&m.own==0&&m.tgt===b&&b.evade<=0&&m.p.distanceToSquared(b.pos)<1600*1600){b.evade=1.7;b.evDir=Math.random()<.5?-1:1;if(Math.random()<.45){m.tgt=null;flareFx(b.pos,b.quat)}}}}
+  if(live&&mode=='dogfight'&&b.grace<=0){b.gunT-=dt;
+   if(dist<D.rng&&cosA>D.cos&&b.gunT<=0){b.gunT=D.rate;tV2.copy(b.f);tV2.x+=rnd(D.sp);tV2.y+=rnd(D.sp);tV2.z+=rnd(D.sp);tV2.normalize().multiplyScalar(820).add(b.tv);addBullet(tV3.copy(b.pos).addScaledVector(b.f,12),tV2,2,b.id,D.dmg,b.name);if(AC&&dist<1500)burst(2800,900,.05,.07)}
+   b.mslT-=dt;if(b.mslT<=0&&dist>D.mr[0]&&dist<D.mr[1]&&cosA>D.mc){b.mslT=D.mi[0]+Math.random()*(D.mi[1]-D.mi[0]);tV2.copy(b.f).multiplyScalar(b.sp+25);spawnMissile(b.id+'m'+(mid++),b.pos,tV2,ME,2,b.id,b.name,D.mdmg,D.mturn)}}
+  for(const m of ms)if(m.a&&m.own==0&&m.tgt===b&&b.evade<=0&&m.p.distanceToSquared(b.pos)<1600*1600){b.evade=1.7;b.evDir=Math.random()<.5?-1:1;if(Math.random()<D.ev){m.tgt=null;flareFx(b.pos,b.quat)}}}}
 function stepMissiles(dt){W.msl=false;
  for(const m of ms){if(!m.a)continue;m.t+=dt;m.sp=m.t<6?Math.min(430,m.sp+230*dt):Math.max(130,m.sp-70*dt);
   let tg=m.tgt;if(tg&&(tg.isMe?crashed:tg.crashed)){m.tgt=tg=null}
   let dist=1e9;
   if(tg){dist=m.p.distanceTo(tg.pos);const tv=tg.tv,tti=Math.min(3,dist/m.sp);tV.copy(tg.pos).addScaledVector(tv,tti).sub(m.p).normalize();
-   if(m.t>.3){const ang=Math.acos(clamp(m.d.dot(tV),-1,1)),stp=Math.min(ang,2.7*dt);if(ang>1e-4){tV2.crossVectors(m.d,tV).normalize();m.d.applyAxisAngle(tV2,stp)}}
+   if(m.t>.3){const ang=Math.acos(clamp(m.d.dot(tV),-1,1)),stp=Math.min(ang,m.turn*dt);if(ang>1e-4){tV2.crossVectors(m.d,tV).normalize();m.d.applyAxisAngle(tV2,stp)}}
    if(tg.isMe&&m.own!=0&&dist<4500)W.msl=true}
   m.p.addScaledVector(m.d,m.sp*dt);m.g.lookAt(m.p.x+m.d.x,m.p.y+m.d.y,m.p.z+m.d.z);
   m.sm+=dt;while(m.sm>.03){m.sm-=.03;smCol.setRGB(.92,.92,.92);emitSmoke(m.p,smCol)}
@@ -980,7 +987,7 @@ function stepMissiles(dt){W.msl=false;
   m.pd=dist;
   const gnd=m.p.y<G(m.p.x,m.p.z)+1;
   if(hit||gnd||m.t>14){m.a=0;m.g.visible=false;boomAt(m.p,!!hit);
-   if(hit===ME&&m.own!=0)damageMe(near?22:45,m.oid,m.on);else if(hit&&hit.bot&&m.own==0)damageBot(hit,near?22:45)}}}
+   if(hit===ME&&m.own!=0)damageMe(near?m.dmg*.5:m.dmg,m.oid,m.on);else if(hit&&hit.bot&&m.own==0)damageBot(hit,near?22:45)}}}
 function stepBullets(dt){for(let i=0;i<NB;i++){const b=bul[i];if(!b.a)continue;b.t+=dt;if(b.t>1.15){b.a=0;bulIM.setMatrixAt(i,zeroM);continue}
   tV2.copy(b.p);b.p.addScaledVector(b.v,dt);if(b.p.y<G(b.p.x,b.p.z)){b.a=0;bulIM.setMatrixAt(i,zeroM);continue}
   if(b.own==0){for(const t of bots)if(!t.crashed&&segDist(tV2,b.p,t.pos)<radOf(t)){b.a=0;damageBot(t,b.dmg);puff(b.p.clone(),1);break}}
